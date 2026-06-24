@@ -1,1 +1,1 @@
-{ "name": "ai-side-hustle", "version": "1.0.0", "scripts": { "start": "node server.js" } }
+{ "name": "ai-side-hustle", "version": "1.0.0" }

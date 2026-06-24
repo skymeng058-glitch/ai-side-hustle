@@ -123,36 +123,12 @@ async function generatePlan() {
     resultCard.innerHTML = '<div class="pay-box"><div class="title">¥9.9 解锁方案</div><div class="desc">首次免费已用完，扫码后继续</div><img src="/qrcode.jpg" alt="收款码"><div style="margin-top:12px;"><button class="btn-paid" onclick="doGenerate()">已付款，继续生成</button></div></div>';
     return;
   }
-
   doGenerate();
 }
 
-async function doGenerate() {
-  const resultCard = document.getElementById("resultCard");
-  const loading = document.getElementById("loading");
-  const submitBtn = document.getElementById("submitBtn");
-  const remainHint = document.getElementById("remainHint");
 
-  resultCard.classList.remove("show"); loading.classList.add("show"); submitBtn.disabled = true;
 
-  try {
-    const res = await fetch("https://ai-side-hustle-kappa.vercel.app/api/plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ identity: selectedIdentity, hours: selectedHours, skills: document.getElementById("skillsInput").value.trim() }) });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
 
-    markFreeUsed();
-    remainHint.textContent = "再次生成需 ¥9.9";
-
-    loading.classList.remove("show"); resultCard.classList.add("show");
-    let html = renderMarkdown(data.content);
-    resultCard.innerHTML = html;
-    submitBtn.disabled = false; submitBtn.textContent = "重新生成 (¥9.9)";
-    resultCard.scrollIntoView({ behavior: "smooth" });
-  } catch (err) {
-    loading.classList.remove("show"); submitBtn.disabled = false;
-    alert("生成失败：" + err.message);
-  }
-}
 
 function utf8Decode(b64) {
   try {
