@@ -1,0 +1,454 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI副业导航 - 找到属于你的副业方向</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    min-height: 100vh;
+    color: #e0e0e0;
+  }
+  .container { max-width: 520px; margin: 0 auto; padding: 24px 16px; }
+  
+  .header { text-align: center; padding: 32px 0 16px; }
+  .header .icon { font-size: 48px; margin-bottom: 12px; }
+  .header h1 { font-size: 26px; font-weight: 700; background: linear-gradient(135deg, #f5af19, #f12711); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .header p { font-size: 14px; color: #999; margin-top: 8px; }
+
+  .card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 24px;
+    backdrop-filter: blur(10px);
+    margin-bottom: 20px;
+  }
+  .card h2 { font-size: 18px; margin-bottom: 20px; color: #fff; }
+
+  .form-group { margin-bottom: 18px; }
+  .form-group label { display: block; font-size: 13px; color: #aaa; margin-bottom: 6px; font-weight: 500; }
+  
+  .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .option-btn {
+    padding: 12px 8px; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px;
+    background: rgba(255,255,255,0.04); color: #ccc; font-size: 14px;
+    cursor: pointer; transition: all 0.2s; text-align: center;
+  }
+  .option-btn:hover { border-color: rgba(245,175,25,0.5); color: #fff; }
+  .option-btn.active { border-color: #f5af19; background: rgba(245,175,25,0.15); color: #f5af19; font-weight: 600; }
+  .option-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  input[type="text"], textarea {
+    width: 100%; padding: 12px 14px; border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px; background: rgba(255,255,255,0.06); color: #fff;
+    font-size: 14px; outline: none; transition: border 0.2s;
+  }
+  input[type="text"]:focus, textarea:focus { border-color: #f5af19; }
+  textarea { resize: vertical; min-height: 70px; font-family: inherit; }
+  input::placeholder, textarea::placeholder { color: #666; }
+
+  .btn {
+    width: 100%; padding: 14px; border: none; border-radius: 12px;
+    background: linear-gradient(135deg, #f5af19, #f12711); color: #fff;
+    font-size: 16px; font-weight: 700; cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn:hover { opacity: 0.9; }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-outline {
+    background: transparent; border: 2px solid #f5af19; color: #f5af19;
+  }
+
+  .result-card {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px; padding: 24px; backdrop-filter: blur(10px);
+    margin-bottom: 20px; display: none; font-size: 14px; line-height: 1.8; color: #d0d0d0;
+  }
+  .result-card.show { display: block; }
+
+  .result-card h3 { font-size: 16px; color: #f5af19; margin: 16px 0 8px; }
+  .result-card h3:first-child { margin-top: 0; }
+  .result-card table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+  .result-card th { background: rgba(245,175,25,0.15); padding: 8px; text-align: left; color: #f5af19; }
+  .result-card td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .result-card ul, .result-card ol { padding-left: 20px; margin: 6px 0; }
+  .result-card li { margin: 4px 0; }
+  .result-card strong { color: #f5af19; }
+  .result-card em { color: #aaa; }
+  .result-card code { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+
+  /* Paywall */
+  .paywall {
+    background: linear-gradient(135deg, rgba(245,175,25,0.1), rgba(241,39,17,0.1));
+    border: 2px dashed rgba(245,175,25,0.5);
+    border-radius: 16px; padding: 28px 20px; text-align: center; margin: 20px 0;
+  }
+  .paywall .price { font-size: 42px; font-weight: 800; color: #f5af19; }
+  .paywall .price small { font-size: 18px; }
+  .paywall .desc { color: #ccc; margin: 8px 0 16px; font-size: 14px; }
+  .paywall .features { text-align: left; display: inline-block; color: #bbb; font-size: 13px; margin-bottom: 16px; }
+  .paywall .features li { margin: 4px 0; }
+
+  /* QR Modal */
+  .modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+    padding: 28px 24px; text-align: center; max-width: 360px; width: 90%;
+  }
+  .modal h3 { color: #fff; margin-bottom: 12px; }
+  .modal .qr-placeholder {
+    width: 200px; height: 200px; margin: 16px auto; border-radius: 12px;
+    background: #fff; display: flex; align-items: center; justify-content: center;
+    color: #333; font-size: 13px; flex-direction: column; gap: 8px;
+  }
+  .modal .qr-placeholder img { width: 180px; height: 180px; object-fit: contain; }
+  .modal .wechat-id { color: #f5af19; font-size: 18px; font-weight: 700; margin: 8px 0; }
+  .modal .hint { color: #999; font-size: 12px; margin-top: 12px; }
+  .modal .close-btn {
+    margin-top: 16px; padding: 8px 24px; background: rgba(255,255,255,0.1);
+    border: none; border-radius: 8px; color: #ccc; cursor: pointer; font-size: 14px;
+  }
+
+  /* Unlock input */
+  .unlock-section {
+    background: rgba(255,255,255,0.04); border-radius: 12px; padding: 20px; margin-top: 16px;
+  }
+  .unlock-section .unlock-row {
+    display: flex; gap: 8px;
+  }
+  .unlock-section input {
+    flex: 1; padding: 10px 12px; border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px; background: rgba(255,255,255,0.06); color: #fff;
+    font-size: 14px; outline: none; text-transform: uppercase;
+  }
+  .unlock-section input:focus { border-color: #f5af19; }
+  .unlock-section .unlock-btn {
+    padding: 10px 20px; border: none; border-radius: 8px;
+    background: #f5af19; color: #1a1a2e; font-weight: 700; cursor: pointer;
+    font-size: 14px; white-space: nowrap;
+  }
+  .unlock-section .unlock-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .unlock-error { color: #f12711; font-size: 13px; margin-top: 8px; display: none; }
+  .unlock-error.show { display: block; }
+
+  .premium-blur {
+    position: relative;
+  }
+  .premium-blur .blur-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: linear-gradient(transparent, rgba(15,12,41,0.95));
+    pointer-events: none;
+  }
+
+  .loading { display: none; text-align: center; padding: 32px; color: #999; font-size: 14px; }
+  .loading.show { display: block; }
+  .loading .dots { display: inline-flex; gap: 6px; margin-left: 8px; }
+  .loading .dots span {
+    width: 6px; height: 6px; background: #f5af19; border-radius: 50%;
+    animation: bounce 1.2s infinite;
+  }
+  .loading .dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading .dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-8px); }
+  }
+
+  .footer { text-align: center; padding: 24px 0; color: #555; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+  
+  <div class="header">
+    <div class="icon">🧭</div>
+    <h1>AI副业导航</h1>
+    <p>不知道自己能做什么副业？3步出方案</p>
+  </div>
+
+  <div class="card" id="formCard">
+    <h2>📋 填完这3个问题</h2>
+
+    <div class="form-group">
+      <label>① 你现在的身份是？</label>
+      <div class="option-grid" id="identityGrid">
+        <button class="option-btn" data-value="工厂打工人">🔧 工厂打工人</button>
+        <button class="option-btn" data-value="办公室文员">💼 办公室文员</button>
+        <button class="option-btn" data-value="宝妈">👶 宝妈</button>
+        <button class="option-btn" data-value="大学生">🎓 大学生</button>
+        <button class="option-btn" data-value="自由职业者">✌️ 自由职业者</button>
+        <button class="option-btn" data-value="其他打工人">💪 其他打工人</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>② 每天能挤出多少时间搞副业？</label>
+      <div class="option-grid option-grid-3" id="hoursGrid">
+        <button class="option-btn" data-value="1-2">1-2 小时</button>
+        <button class="option-btn" data-value="2-4">2-4 小时</button>
+        <button class="option-btn" data-value="4+">4 小时以上</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>③ 你有什么技能或资源？（没有就填"无"，实话实说就行）</label>
+      <textarea id="skillsInput" placeholder="比如：会开车、会做饭、英语还行、有辆面包车、手机拍照还行、会点电脑... 啥都没有就写"无""></textarea>
+    </div>
+
+    <button class="btn" id="submitBtn" onclick="generatePlan()">🚀 免费生成副业方案</button>
+  </div>
+
+  <div class="loading" id="loading">
+    正在分析你的副业方向<div class="dots"><span></span><span></span><span></span></div>
+  </div>
+
+  <div class="result-card" id="resultCard"></div>
+
+  <div class="footer">
+    仅提供方向参考 · 脚踏实地干最重要
+  </div>
+</div>
+
+<!-- 付款弹窗 -->
+<div class="modal-overlay" id="qrModal">
+  <div class="modal">
+    <h3>🔓 解锁完整方案 ¥9.9</h3>
+    <div class="qr-placeholder" id="qrImage">
+      <span style="font-size:32px;">📱</span>
+      <span>请替换为你的收款码</span>
+    </div>
+    <p style="color:#ccc;font-size:13px;">扫码付款后，截图发微信领激活码</p>
+    <div class="wechat-id" id="wechatDisplay">微信：你的微信号</div>
+    <p class="hint">拿到激活码后，在下方输入即可解锁</p>
+    <button class="close-btn" onclick="closeModal()">关闭</button>
+  </div>
+</div>
+
+<script>
+let selectedIdentity = null;
+let selectedHours = null;
+let currentSessionId = null;
+
+// 身份选择
+document.querySelectorAll("#identityGrid .option-btn").forEach(btn => {
+  btn.addEventListener("click", function() {
+    document.querySelectorAll("#identityGrid .option-btn").forEach(b => b.classList.remove("active"));
+    this.classList.add("active");
+    selectedIdentity = this.dataset.value;
+  });
+});
+
+// 时间选择
+document.querySelectorAll("#hoursGrid .option-btn").forEach(btn => {
+  btn.addEventListener("click", function() {
+    document.querySelectorAll("#hoursGrid .option-btn").forEach(b => b.classList.remove("active"));
+    this.classList.add("active");
+    selectedHours = this.dataset.value;
+  });
+});
+
+function generatePlan() {
+  const skills = document.getElementById("skillsInput").value.trim();
+  
+  if (!selectedIdentity) { alert("请选择你的身份"); return; }
+  if (!selectedHours) { alert("请选择每天可用时间"); return; }
+  if (skills === "") { alert("技能栏不能空着，没有就写'无'"); return; }
+
+  const resultCard = document.getElementById("resultCard");
+  const loading = document.getElementById("loading");
+  const submitBtn = document.getElementById("submitBtn");
+
+  resultCard.classList.remove("show");
+  resultCard.innerHTML = "";
+  loading.classList.add("show");
+  submitBtn.disabled = true;
+
+  const identity = selectedIdentity;
+  const hours = selectedHours;
+
+  fetch("/api/plan", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ identity, hours, skills })
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("请求失败");
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    loading.classList.remove("show");
+    resultCard.classList.add("show");
+
+    function read() {
+      reader.read().then(({ done, value }) => {
+        if (done) {
+          // 提取 sessionId
+          const sessionMatch = buffer.match(/---SESSION:([a-f0-9-]+)/);
+          if (sessionMatch) {
+            currentSessionId = sessionMatch[1];
+            buffer = buffer.replace(/---SESSION:[a-f0-9-]+/, "");
+          }
+
+          // 解析付费墙
+          const paywallIndex = buffer.indexOf("---PAYWALL---");
+          let freeContent, premiumContent;
+          
+          if (paywallIndex > -1) {
+            freeContent = buffer.substring(0, paywallIndex);
+            premiumContent = buffer.substring(paywallIndex + "---PAYWALL---".length);
+          } else {
+            freeContent = buffer;
+            premiumContent = "";
+          }
+
+          // 渲染免费内容 + 付费墙
+          let html = renderMarkdown(freeContent);
+          
+          if (premiumContent.trim()) {
+            html += buildPaywall();
+          }
+
+          resultCard.innerHTML = html;
+
+          // 绑定付费墙按钮事件
+          bindPaywallEvents();
+          
+          submitBtn.disabled = false;
+          submitBtn.textContent = "🔄 重新生成方案";
+          resultCard.scrollIntoView({ behavior: "smooth" });
+          return;
+        }
+        buffer += decoder.decode(value, { stream: true });
+        read();
+      });
+    }
+    read();
+  })
+  .catch(err => {
+    loading.classList.remove("show");
+    submitBtn.disabled = false;
+    submitBtn.textContent = "🚀 免费生成副业方案";
+    alert("生成失败：" + err.message);
+  });
+}
+
+function buildPaywall() {
+  return `
+    <div class="paywall" id="paywallSection">
+      <div class="price">¥9.9 <small>解锁完整方案</small></div>
+      <ul class="features">
+        <li>✅ 最适合你的副业方向 + 详细操作步骤</li>
+        <li>✅ 3个该领域的坑，不踩雷</li>
+        <li>✅ 启动资金、回本周期、收入预估</li>
+      </ul>
+      <button class="btn" onclick="showQRModal()">💳 扫码解锁完整方案</button>
+      <div style="margin-top:16px;color:#888;font-size:12px;">已有激活码？</div>
+    </div>
+    <div class="unlock-section">
+      <div class="unlock-row">
+        <input type="text" id="unlockCodeInput" placeholder="输入激活码" maxlength="20" autocomplete="off">
+        <button class="unlock-btn" onclick="unlockPlan()">解锁</button>
+      </div>
+      <div class="unlock-error" id="unlockError"></div>
+    </div>
+  `;
+}
+
+function bindPaywallEvents() {
+  // 事件在 HTML 中已绑定
+}
+
+function showQRModal() {
+  document.getElementById("qrModal").classList.add("show");
+}
+
+function closeModal() {
+  document.getElementById("qrModal").classList.remove("show");
+}
+
+// 点击遮罩关闭
+document.getElementById("qrModal").addEventListener("click", function(e) {
+  if (e.target === this) closeModal();
+});
+
+async function unlockPlan() {
+  const code = document.getElementById("unlockCodeInput").value.trim().toUpperCase();
+  const errorEl = document.getElementById("unlockError");
+
+  if (!code) {
+    errorEl.textContent = "请输入激活码";
+    errorEl.classList.add("show");
+    return;
+  }
+
+  if (!currentSessionId) {
+    errorEl.textContent = "会话已过期，请重新生成方案";
+    errorEl.classList.add("show");
+    return;
+  }
+
+  const unlockBtn = document.querySelector(".unlock-btn");
+  unlockBtn.disabled = true;
+  unlockBtn.textContent = "验证中...";
+  errorEl.classList.remove("show");
+
+  try {
+    const res = await fetch("/api/unlock", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, sessionId: currentSessionId })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      errorEl.textContent = data.error || "激活失败";
+      errorEl.classList.add("show");
+      unlockBtn.disabled = false;
+      unlockBtn.textContent = "解锁";
+      return;
+    }
+
+    // 成功！替换付费墙为完整内容
+    const paywallSection = document.getElementById("paywallSection");
+    const unlockSection = document.querySelector(".unlock-section");
+    
+    if (paywallSection) paywallSection.remove();
+    if (unlockSection) {
+      unlockSection.outerHTML = renderMarkdown(data.content);
+    }
+  } catch (err) {
+    errorEl.textContent = "网络错误，请重试";
+    errorEl.classList.add("show");
+    unlockBtn.disabled = false;
+    unlockBtn.textContent = "解锁";
+  }
+}
+
+function renderMarkdown(text) {
+  if (!text) return "";
+  let html = text;
+  
+  html = html.replace(/【(.+?)】/g, "<h3>【$1】</h3>");
+  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/^- (.+)$/gm, "<li>$1</li>");
+  html = html.replace(/(<li>.*?<\/li>\s*)+/g, "<ul>$&</ul>");
+  html = html.replace(/\n\n/g, "</p><p>");
+  html = html.replace(/\n/g, "<br>");
+  
+  return "<p>" + html + "</p>";
+}
+</script>
+</body>
+</html>

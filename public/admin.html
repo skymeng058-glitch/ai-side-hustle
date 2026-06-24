@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI副业导航 - 管理后台</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #1a1a2e; color: #e0e0e0; padding: 24px; min-height: 100vh;
+  }
+  .container { max-width: 700px; margin: 0 auto; }
+  h1 { color: #f5af19; margin-bottom: 24px; font-size: 22px; }
+  .card {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px; padding: 20px; margin-bottom: 20px;
+  }
+  .card h2 { font-size: 16px; margin-bottom: 16px; color: #fff; }
+  .row { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+  input {
+    padding: 10px 14px; border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px; background: rgba(255,255,255,0.06); color: #fff;
+    font-size: 14px; outline: none; width: 100px;
+  }
+  input:focus { border-color: #f5af19; }
+  .btn {
+    padding: 10px 20px; border: none; border-radius: 8px;
+    background: #f5af19; color: #1a1a2e; font-weight: 700; cursor: pointer; font-size: 14px;
+  }
+  .btn:hover { opacity: 0.9; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: rgba(245,175,25,0.15); padding: 10px 8px; text-align: left; color: #f5af19; }
+  td { padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .badge-free { background: rgba(0,200,100,0.2); color: #00c864; }
+  .badge-used { background: rgba(200,0,0,0.2); color: #f12711; }
+
+  .copy-btn { background: none; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: #aaa; cursor: pointer; padding: 2px 8px; font-size: 11px; }
+  .copy-btn:hover { border-color: #f5af19; color: #f5af19; }
+
+  #genResult { margin-top: 12px; }
+  #genResult .code-item {
+    display: inline-block; background: rgba(245,175,25,0.1); border: 1px solid rgba(245,175,25,0.3);
+    border-radius: 6px; padding: 4px 10px; margin: 4px; font-family: monospace; font-size: 13px;
+    color: #f5af19; cursor: pointer;
+  }
+  #genResult .code-item:hover { background: rgba(245,175,25,0.2); }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🔧 AI副业导航 - 管理后台</h1>
+
+  <div class="card">
+    <h2>🎫 生成激活码</h2>
+    <div class="row">
+      <span>数量：</span>
+      <input type="number" id="codeCount" value="10" min="1" max="100">
+      <span>前缀：</span>
+      <input type="text" id="codePrefix" placeholder="可选" style="width:120px;">
+      <button class="btn" onclick="generateCodes()">生成</button>
+    </div>
+    <div id="genResult"></div>
+  </div>
+
+  <div class="card">
+    <h2>📊 激活码列表 <button class="btn" onclick="loadCodes()" style="font-size:12px;padding:4px 12px;margin-left:8px;">刷新</button></h2>
+    <table>
+      <thead>
+        <tr><th>激活码</th><th>状态</th><th>创建时间</th><th>使用时间</th></tr>
+      </thead>
+      <tbody id="codesTable">
+        <tr><td colspan="4" style="text-align:center;color:#666;">点击刷新加载...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+async function loadCodes() {
+  try {
+    const res = await fetch("/api/admin/codes");
+    const data = await res.json();
+    const tbody = document.getElementById("codesTable");
+    
+    if (data.codes.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#666;">暂无激活码，先生成几个</td></tr>';
+      return;
+    }
+
+    data.codes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    tbody.innerHTML = data.codes.map(c => `
+      <tr>
+        <td>
+          <code style="color:#f5af19;">${c.code}</code>
+          <button class="copy-btn" onclick="copyCode('${c.code}')">复制</button>
+        </td>
+        <td><span class="badge ${c.used ? 'badge-used' : 'badge-free'}">${c.used ? '已使用' : '可用'}</span></td>
+        <td>${new Date(c.createdAt).toLocaleString("zh-CN")}</td>
+        <td>${c.usedAt ? new Date(c.usedAt).toLocaleString("zh-CN") : "-"}</td>
+      </tr>
+    `).join("");
+  } catch (err) {
+    document.getElementById("codesTable").innerHTML = '<tr><td colspan="4" style="text-align:center;color:#f12711;">加载失败</td></tr>';
+  }
+}
+
+async function generateCodes() {
+  const count = parseInt(document.getElementById("codeCount").value) || 10;
+  const prefix = document.getElementById("codePrefix").value.trim().toUpperCase();
+
+  try {
+    const res = await fetch("/api/admin/generate-codes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ count, prefix })
+    });
+    const data = await res.json();
+
+    document.getElementById("genResult").innerHTML = `
+      <p style="color:#00c864;margin-bottom:8px;">✅ 生成了 ${data.generated.length} 个新激活码（点击复制）：</p>
+      ${data.generated.map(c => `<span class="code-item" onclick="copyCode('${c}')" title="点击复制">${c}</span>`).join("")}
+    `;
+
+    loadCodes();
+  } catch (err) {
+    document.getElementById("genResult").innerHTML = '<p style="color:#f12711;">生成失败</p>';
+  }
+}
+
+function copyCode(code) {
+  navigator.clipboard.writeText(code).then(() => {
+    alert("已复制：" + code);
+  }).catch(() => {
+    prompt("手动复制", code);
+  });
+}
+
+loadCodes();
+</script>
+</body>
+</html>

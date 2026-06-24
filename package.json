@@ -1,0 +1,15 @@
+﻿{
+  "name": "ai-side-hustle",
+  "version": "1.0.0",
+  "description": "AI副业导航 - 帮普通人找到适合自己的副业方向",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "openai": "^4.20.0"
+  }
+}
