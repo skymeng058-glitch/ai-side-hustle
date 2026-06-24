@@ -1,11 +1,1 @@
-{
-  "name": "ai-side-hustle",
-  "version": "1.0.0",
-  "description": "AI副业导航",
-  "scripts": {
-    "build": "echo done"
-  },
-  "dependencies": {
-    "openai": "^4.20.0"
-  }
-}
+{ "name": "ai-side-hustle", "version": "1.0.0", "scripts": { "start": "node server.js" } }

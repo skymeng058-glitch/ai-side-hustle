@@ -3,14 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI副业导航 - 找到属于你的副业方向</title>
+<title>AI副业导航</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    min-height: 100vh; color: #e0e0e0;
-  }
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); min-height: 100vh; color: #e0e0e0; }
   .container { max-width: 520px; margin: 0 auto; padding: 24px 16px; }
   .header { text-align: center; padding: 32px 0 16px; }
   .header .icon { font-size: 48px; margin-bottom: 12px; }
@@ -25,13 +21,12 @@
   .option-btn:hover { border-color: rgba(245,175,25,0.5); color: #fff; }
   .option-btn.active { border-color: #f5af19; background: rgba(245,175,25,0.15); color: #f5af19; font-weight: 600; }
   .option-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
-  input[type="text"], textarea { width: 100%; padding: 12px 14px; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; background: rgba(255,255,255,0.06); color: #fff; font-size: 14px; outline: none; transition: border 0.2s; }
+  input[type="text"], textarea { width: 100%; padding: 12px 14px; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; background: rgba(255,255,255,0.06); color: #fff; font-size: 14px; outline: none; }
   input[type="text"]:focus, textarea:focus { border-color: #f5af19; }
   textarea { resize: vertical; min-height: 70px; font-family: inherit; }
   input::placeholder, textarea::placeholder { color: #666; }
-  .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, #f5af19, #f12711); color: #fff; font-size: 16px; font-weight: 700; cursor: pointer; transition: opacity 0.2s, transform 0.1s; }
+  .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, #f5af19, #f12711); color: #fff; font-size: 16px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
   .btn:hover { opacity: 0.9; }
-  .btn:active { transform: scale(0.98); }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .result-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; backdrop-filter: blur(10px); margin-bottom: 20px; display: none; font-size: 14px; line-height: 1.8; color: #d0d0d0; }
   .result-card.show { display: block; }
@@ -43,27 +38,11 @@
   .result-card ul, .result-card ol { padding-left: 20px; margin: 6px 0; }
   .result-card li { margin: 4px 0; }
   .result-card strong { color: #f5af19; }
-  .paywall { background: linear-gradient(135deg, rgba(245,175,25,0.1), rgba(241,39,17,0.1)); border: 2px dashed rgba(245,175,25,0.5); border-radius: 16px; padding: 28px 20px; text-align: center; margin: 20px 0; }
-  .paywall .price { font-size: 42px; font-weight: 800; color: #f5af19; }
-  .paywall .price small { font-size: 18px; }
-  .paywall .features { text-align: left; display: inline-block; color: #bbb; font-size: 13px; margin-bottom: 16px; }
-  .paywall .features li { margin: 4px 0; }
-  .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
-  .modal-overlay.show { display: flex; }
-  .modal { background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 28px 24px; text-align: center; max-width: 360px; width: 90%; }
-  .modal h3 { color: #fff; margin-bottom: 12px; }
-  .modal .qr-placeholder { width: 200px; height: 200px; margin: 16px auto; border-radius: 12px; background: #fff; display: flex; align-items: center; justify-content: center; color: #333; font-size: 13px; flex-direction: column; gap: 8px; }
-  .modal .wechat-id { color: #f5af19; font-size: 18px; font-weight: 700; margin: 8px 0; }
-  .modal .hint { color: #999; font-size: 12px; margin-top: 12px; }
-  .modal .close-btn { margin-top: 16px; padding: 8px 24px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #ccc; cursor: pointer; font-size: 14px; }
-  .unlock-section { background: rgba(255,255,255,0.04); border-radius: 12px; padding: 20px; margin-top: 16px; }
-  .unlock-section .unlock-row { display: flex; gap: 8px; }
-  .unlock-section input { flex: 1; padding: 10px 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(255,255,255,0.06); color: #fff; font-size: 14px; outline: none; text-transform: uppercase; }
-  .unlock-section input:focus { border-color: #f5af19; }
-  .unlock-section .unlock-btn { padding: 10px 20px; border: none; border-radius: 8px; background: #f5af19; color: #1a1a2e; font-weight: 700; cursor: pointer; font-size: 14px; white-space: nowrap; }
-  .unlock-section .unlock-btn:disabled { opacity: 0.6; }
-  .unlock-error { color: #f12711; font-size: 13px; margin-top: 8px; display: none; }
-  .unlock-error.show { display: block; }
+  .pay-box { text-align: center; padding: 24px; margin-top: 20px; border-radius: 12px; background: rgba(245,175,25,0.08); border: 2px dashed rgba(245,175,25,0.4); }
+  .pay-box img { width: 180px; height: 180px; object-fit: contain; border-radius: 8px; }
+  .pay-box .title { color: #f5af19; font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .pay-box .desc { color: #ccc; font-size: 14px; margin-bottom: 12px; }
+  .pay-box .btn-paid { background: #07c160; color: #fff; border: none; padding: 10px 30px; border-radius: 8px; font-size: 14px; cursor: pointer; margin-top: 12px; }
   .loading { display: none; text-align: center; padding: 32px; color: #999; font-size: 14px; }
   .loading.show { display: block; }
   .footer { text-align: center; padding: 24px 0; color: #555; font-size: 12px; }
@@ -76,7 +55,6 @@
     <h1>AI副业导航</h1>
     <p>不知道自己能做什么副业？3步出方案</p>
   </div>
-
   <div class="card" id="formCard">
     <h2>📋 填完这3个问题</h2>
     <div class="form-group">
@@ -103,147 +81,92 @@
       <textarea id="skillsInput" placeholder="比如：会开车、会做饭、英语还行、会点电脑..."></textarea>
     </div>
     <button class="btn" id="submitBtn" onclick="generatePlan()">🚀 免费生成副业方案</button>
+    <p style="color:#888;font-size:12px;text-align:center;margin-top:8px;" id="remainHint">首次免费，之后 ¥9.9 一次</p>
   </div>
-
   <div class="loading" id="loading">正在分析你的副业方向...</div>
   <div class="result-card" id="resultCard"></div>
-  <div class="footer">仅提供方向参考 · 脚踏实地干最重要</div>
+  <div class="footer">完全免费 · 觉得有用就请兄弟喝瓶水</div>
 </div>
-
-<div class="modal-overlay" id="qrModal">
-  <div class="modal">
-    <h3>🔓 解锁完整方案 ¥9.9</h3>
-    <div class="qr-placeholder" id="qrImage"><img src="/qrcode.jpg" alt="收款码" style="width:180px;height:180px;object-fit:contain;"></div>
-    <p style="color:#ccc;font-size:13px;">扫码付款后，截图发微信领激活码</p>
-    <div class="wechat-id" id="wechatDisplay">微信：meng058-glitch</div>
-    <p class="hint">拿到激活码后，在下方输入即可解锁</p>
-    <button class="close-btn" onclick="closeModal()">关闭</button>
-  </div>
-</div>
-
 <script>
-let selectedIdentity = null;
-let selectedHours = null;
-let premiumEncrypted = "";
+let selectedIdentity = null, selectedHours = null;
+const FREE_KEY = "ai_fuye_free_used";
 
 document.querySelectorAll("#identityGrid .option-btn").forEach(btn => {
   btn.addEventListener("click", function() {
     document.querySelectorAll("#identityGrid .option-btn").forEach(b => b.classList.remove("active"));
-    this.classList.add("active");
-    selectedIdentity = this.dataset.value;
+    this.classList.add("active"); selectedIdentity = this.dataset.value;
   });
 });
-
 document.querySelectorAll("#hoursGrid .option-btn").forEach(btn => {
   btn.addEventListener("click", function() {
     document.querySelectorAll("#hoursGrid .option-btn").forEach(b => b.classList.remove("active"));
-    this.classList.add("active");
-    selectedHours = this.dataset.value;
+    this.classList.add("active"); selectedHours = this.dataset.value;
   });
 });
+
+function isFreeUsed() { return localStorage.getItem(FREE_KEY) === "1"; }
+function markFreeUsed() { localStorage.setItem(FREE_KEY, "1"); }
 
 async function generatePlan() {
   const skills = document.getElementById("skillsInput").value.trim();
   if (!selectedIdentity) { alert("请选择你的身份"); return; }
   if (!selectedHours) { alert("请选择每天可用时间"); return; }
-  if (skills === "") { alert("技能栏不能空着，没有就写'无'"); return; }
+  if (skills === "") { alert("技能栏不能空着，没有就写无"); return; }
 
   const resultCard = document.getElementById("resultCard");
   const loading = document.getElementById("loading");
   const submitBtn = document.getElementById("submitBtn");
-  resultCard.classList.remove("show");
-  loading.classList.add("show");
-  submitBtn.disabled = true;
+  const remainHint = document.getElementById("remainHint");
+
+  if (isFreeUsed()) {
+    resultCard.classList.add("show");
+    resultCard.innerHTML = '<div class="pay-box"><div class="title">¥9.9 解锁方案</div><div class="desc">首次免费已用完，扫码后继续</div><img src="/qrcode.jpg" alt="收款码"><div style="margin-top:12px;"><button class="btn-paid" onclick="doGenerate()">已付款，继续生成</button></div></div>';
+    return;
+  }
+
+  doGenerate();
+}
+
+async function doGenerate() {
+  const resultCard = document.getElementById("resultCard");
+  const loading = document.getElementById("loading");
+  const submitBtn = document.getElementById("submitBtn");
+  const remainHint = document.getElementById("remainHint");
+
+  resultCard.classList.remove("show"); loading.classList.add("show"); submitBtn.disabled = true;
 
   try {
-    const res = await fetch("/api/plan", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ identity: selectedIdentity, hours: selectedHours, skills })
-    });
+    const res = await fetch("https://ai-side-hustle-kappa.vercel.app/api/plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ identity: selectedIdentity, hours: selectedHours, skills: document.getElementById("skillsInput").value.trim() }) });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
 
-    loading.classList.remove("show");
-    resultCard.classList.add("show");
+    markFreeUsed();
+    remainHint.textContent = "再次生成需 ¥9.9";
 
-    let html = renderMarkdown(data.freeContent);
-    if (data.premiumEncrypted) {
-      premiumEncrypted = data.premiumEncrypted;
-      html += buildPaywall();
-    }
+    loading.classList.remove("show"); resultCard.classList.add("show");
+    let html = renderMarkdown(data.content);
     resultCard.innerHTML = html;
-    submitBtn.disabled = false;
-    submitBtn.textContent = "🔄 重新生成方案";
+    submitBtn.disabled = false; submitBtn.textContent = "重新生成 (¥9.9)";
     resultCard.scrollIntoView({ behavior: "smooth" });
   } catch (err) {
-    loading.classList.remove("show");
-    submitBtn.disabled = false;
-    submitBtn.textContent = "🚀 免费生成副业方案";
+    loading.classList.remove("show"); submitBtn.disabled = false;
     alert("生成失败：" + err.message);
   }
 }
 
-function buildPaywall() {
-  return `
-    <div class="paywall" id="paywallSection">
-      <div class="price">¥9.9 <small>解锁完整方案</small></div>
-      <ul class="features">
-        <li>✅ 最适合你的副业方向 + 详细操作步骤</li>
-        <li>✅ 3个该领域的坑，不踩雷</li>
-        <li>✅ 启动资金、回本周期、收入预估</li>
-      </ul>
-      <button class="btn" onclick="showQRModal()">💳 扫码解锁完整方案</button>
-      <div style="margin-top:16px;color:#888;font-size:12px;">已有激活码？</div>
-    </div>
-    <div class="unlock-section">
-      <div class="unlock-row">
-        <input type="text" id="unlockCodeInput" placeholder="输入激活码" maxlength="20" autocomplete="off">
-        <button class="unlock-btn" onclick="unlockPlan()">解锁</button>
-      </div>
-      <div class="unlock-error" id="unlockError"></div>
-    </div>`;
-}
-
-function showQRModal() { document.getElementById("qrModal").classList.add("show"); }
-function closeModal() { document.getElementById("qrModal").classList.remove("show"); }
-document.getElementById("qrModal").addEventListener("click", function(e) { if (e.target === this) closeModal(); });
-
-async function unlockPlan() {
-  const code = document.getElementById("unlockCodeInput").value.trim().toUpperCase();
-  const errorEl = document.getElementById("unlockError");
-  if (!code) { errorEl.textContent = "请输入激活码"; errorEl.classList.add("show"); return; }
-
-  const unlockBtn = document.querySelector(".unlock-btn");
-  unlockBtn.disabled = true;
-  unlockBtn.textContent = "验证中...";
-  errorEl.classList.remove("show");
-
+function utf8Decode(b64) {
   try {
-    const res = await fetch("/api/unlock", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, encryptedContent: premiumEncrypted })
-    });
-    const data = await res.json();
-    if (!res.ok) { errorEl.textContent = data.error || "激活失败"; errorEl.classList.add("show"); unlockBtn.disabled = false; unlockBtn.textContent = "解锁"; return; }
-
-    const paywallSection = document.getElementById("paywallSection");
-    const unlockSection = document.querySelector(".unlock-section");
-    if (paywallSection) paywallSection.remove();
-    if (unlockSection) unlockSection.outerHTML = renderMarkdown(data.content);
-  } catch (err) {
-    errorEl.textContent = "网络错误，请重试";
-    errorEl.classList.add("show");
-    unlockBtn.disabled = false;
-    unlockBtn.textContent = "解锁";
+    const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    return new TextDecoder("utf-8").decode(bytes);
+  } catch(e) {
+    return b64;
   }
 }
 
 function renderMarkdown(text) {
   if (!text) return "";
   let html = text;
-  html = html.replace(/【(.+?)】/g, "<h3>【$1】</h3>");
+  html = html.replace(/【(.+?)】/g, "<h3>$1</h3>");
   html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   html = html.replace(/^- (.+)$/gm, "<li>$1</li>");
   html = html.replace(/(<li>.*?<\/li>\s*)+/g, "<ul>$&</ul>");
