@@ -1,18 +1,11 @@
 ﻿const OpenAI = require("openai");
 
-// Simple encrypt/decrypt using base64 + secret
 const SECRET = process.env.SECRET_KEY || "ai-side-hustle-secret-2024";
 
 function encrypt(text) {
   const key = SECRET.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
   const chars = text.split("").map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ ((key + i) % 256)));
   return Buffer.from(chars.join("")).toString("base64");
-}
-
-function decrypt(encoded) {
-  const key = SECRET.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
-  const chars = Buffer.from(encoded, "base64").toString().split("");
-  return chars.map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ ((key + i) % 256))).join("");
 }
 
 const SYSTEM_PROMPT = `你是副业规划师，专帮打工人找副业。用户给的信息哪怕再少，你也要直接给方案，不要反问、不要让他补充信息、不要拒绝回答。
@@ -37,26 +30,21 @@ const SYSTEM_PROMPT = `你是副业规划师，专帮打工人找副业。用户
 
 启动多少钱、多久见第一笔钱、多久稳定月入XX。
 
-铁规矩：
-- 不说"以下是"、"接下来"、"值得注意的是"、"说白了"、"划重点"、"总的来说"。
-- 不写"不是A而是B"、"先A再B"、"真正重要的是"、"核心在于"、"底层逻辑"。
-- 段落长短不一。结尾不问问题。不写"如果你有XX告诉我"。
-- 用"兄弟"称呼。像产线歇烟聊天。`;
+铁规矩：不说"以下是"、"接下来"、"值得注意的是"、"说白了"、"划重点"、"总的来说"。不写"不是A而是B"、"先A再B"、"真正重要的是"、"核心在于"、"底层逻辑"。段落长短不一。结尾不问问题。用"兄弟"称呼。`;
+
+const client = new OpenAI({
+  apiKey: process.env.DEEPSEEK_API_KEY,
+  baseURL: "https://api.deepseek.com/v1",
+  defaultHeaders: { "User-Agent": "ai-side-hustle/1.0" },
+  timeout: 25000,
+  maxRetries: 2,
+});
 
 module.exports = async (req, res) => {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const { identity, hours, skills } = req.body;
-  if (!identity || !hours || skills === undefined) {
-    return res.status(400).json({ error: "请填写完整信息" });
-  }
-
-  const client = new OpenAI({
-    apiKey: process.env.DEEPSEEK_API_KEY,
-    baseURL: "https://api.deepseek.com",
-  });
+  if (!identity || !hours || skills === undefined) return res.status(400).json({ error: "请填写完整信息" });
 
   try {
     const completion = await client.chat.completions.create({
@@ -72,12 +60,9 @@ module.exports = async (req, res) => {
     const freeContent = parts[0]?.trim() || "";
     const premiumContent = parts.length > 1 ? parts[1].trim() : "";
 
-    res.json({
-      freeContent,
-      premiumEncrypted: premiumContent ? encrypt(premiumContent) : "",
-    });
+    res.json({ freeContent, premiumEncrypted: premiumContent ? encrypt(premiumContent) : "" });
   } catch (err) {
-    console.error("API Error:", err.message);
-    res.status(500).json({ error: "生成出错，请稍后重试" });
+    console.error("Plan API Error:", err.message, err.status, err.code);
+    res.status(500).json({ error: "生成出错：" + (err.message || "未知错误") });
   }
 };
